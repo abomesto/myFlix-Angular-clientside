@@ -102,66 +102,126 @@ export class FetchApiDataService {
       })
       .pipe(map(this.extractResponseData), catchError(this.handleError));
   }
+
+/**
+   * get the users favorite movies
+   * @param username
+   * @returns the users array of favorite movies
+   */
+getFavoriteMovies(): Observable<any> {
+  const token = localStorage.getItem('token');
+  const username = localStorage.getItem('Username');
+  return this.http
+    .get(apiUrl + 'users/' + username, {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + token,
+      }),
+    })
+    .pipe(
+      map(this.extractResponseData),
+      map((data) => data.FavoriteMovies),
+      catchError(this.handleError)
+    );
+}
+
+/**
+ * add a movie to the users favorite movies array
+ * @param userName
+ * @param movieId - unique movie id
+ * @returns a movie added to the users favorite movies array
+ * used in the movie-card component
+ */
+addFavoriteMovie(username: string, MovieID: string): Observable<any> {
+  const token = localStorage.getItem('token');
+  const requestMovie = { movie_id: MovieID };
+  return this.http
+    .post(apiUrl + 'users/' + username + '/movies/' + MovieID, requestMovie, {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + token,
+      }),
+    })
+    .pipe(map(this.extractResponseData), catchError(this.handleError));
+}
+/**
+   * delete a movie from the users favorite movies array
+   * @param username
+   * @param movieId - unique movie id
+   * @returns deletes the movie from the users favorite movies array
+   * used in the movie-card component and the user-profile component
+   */
+deleteFavoriteMovie(username: string, MovieID: string): Observable<any> {
+  const token = localStorage.getItem('token');
+  return this.http
+    .delete(apiUrl + 'users/' + username + '/movies/' + MovieID, {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + token,
+      }),
+    })
+    .pipe(map(this.extractResponseData), catchError(this.handleError));
+}
+
+
     
-    public addFavMovie(favMovieId: string): Observable<any> {
-      const token = localStorage.getItem('token');
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      user.FavoriteMovies.push(favMovieId);
-      localStorage.setItem('user', JSON.stringify(user));
-      console.log('fetch api: add fav movies called');
-      console.log(favMovieId);
-      console.log(`Add Fav Token: ${token}`);
-      console.log(`Username: ${user.Username}`);
+    // public addFavMovie(favMovieId: string): Observable<any> {
+    //   console.log('' , favMovieId)
+    //   const token = localStorage.getItem('token');
+    //   const user = JSON.parse(localStorage.getItem('user') || '{}');
+    //   user.FavoriteMovies.Push(favMovieId);
+    //   localStorage.setItem('user', JSON.stringify(user));
+    //   console.log('fetch api: add fav movies called');
+    //   console.log(favMovieId);
+    //   console.log(`Add Fav Token: ${token}`);
+    //   console.log(`Username: ${user.Username}`);
   
-      return this.http
-        .post<Response>(
-          apiUrl + 'users/' + user.Username + '/movies/' + favMovieId,
-          {},
-          {
-            headers: new HttpHeaders({
-              Authorization: 'Bearer ' + token,
-            }),
-          }
-        )
-        .pipe(map(this.extractResponseData), catchError(this.handleError));
-    }
+    //   return this.http
+    //     .post<Response>(
+    //       apiUrl + 'users/' + user.Username + '/movies/' + favMovieId,
+    //       {},
+    //       {
+    //         headers: new HttpHeaders({
+    //           Authorization: 'Bearer ' + token,
+    //         }),
+    //       }
+    //     )
+    //     .pipe(map(this.extractResponseData), catchError(this.handleError));
+    // }
   
-    public deleteFavMovie(favMovieId: string): Observable<any> {
-      const token = localStorage.getItem('token');
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
+    // public deleteFavMovie(favMovieId: string): Observable<any> {
+    //   const token = localStorage.getItem('token');
+    //   const user = JSON.parse(localStorage.getItem('user') || '{}');
   
-      const index = user.FavoriteMovies.indexOf(favMovieId);
-      console.log('index:', index);
+    //   const index = user.FavoriteMovies.indexOf(favMovieId);
+    //   console.log('index:', index);
   
-      console.log(`Delete Fav Token: ${token}`);
+    //   console.log(`Delete Fav Token: ${token}`);
   
-      if (index > -1) {
-        user.FavoriteMovies.splice(index, 1);
-      }
-      localStorage.setItem('user', JSON.stringify(user));
+    //   if (index > -1) {
+    //     user.FavoriteMovies.splice(index, 1);
+    //   }
+    //   localStorage.setItem('user', JSON.stringify(user));
   
-      return this.http
-        .delete<Response>(
-          apiUrl + 'users/' + user.Username + '/movies/' + favMovieId,
-          {
-            headers: new HttpHeaders({
-              Authorization: 'Bearer ' + token,
-            }),
-          }
-        )
-        .pipe(map(this.extractResponseData), catchError(this.handleError));
-    }
+    //   return this.http
+    //     .delete<Response>(
+    //       apiUrl + 'users/' + user.Username + '/movies/' + favMovieId,
+    //       {
+    //         headers: new HttpHeaders({
+    //           Authorization: 'Bearer ' + token,
+    //         }),
+    //       }
+    //     )
+    //     .pipe(map(this.extractResponseData), catchError(this.handleError));
+    // }
   
-    public isFavMovies(favMovieId: string): boolean {
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      // const token = localStorage.getItem('token');
-      // return user.favoriteMovies.indeOf(favMovieId) >= 0;
-      if (user) {
-        return user.FavoriteMovies.includes(favMovieId);
-      } else {
-        return false;
-      }
-    }
+    // public isFavMovies(favMovieId: string): boolean {
+    //   const user = JSON.parse(localStorage.getItem('user') || '{}');
+    //   // const token = localStorage.getItem('token');
+    //   // return user.favoriteMovies.indeOf(favMovieId) >= 0;
+    //   if (user) {
+    //     return user.FavoriteMovies.includes(favMovieId);
+    //   } else {
+    //     return false;
+    //   }
+    // }
   
 
    

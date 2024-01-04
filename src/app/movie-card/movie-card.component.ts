@@ -82,38 +82,78 @@ export class MovieCardComponent implements OnInit {
     });
   }
 
-   /**
-   *
-   * @param favMovieId
-   * @returns a boolean, if the following movie is in the users favorite list or not
+    /**
+   * gets user's favorite movies and populates favorites array
+   * @returns user's favorite movies
    */
-   isFavorite(favMovieId: string): boolean {
-    return this.fetchApiData.isFavMovies(favMovieId);
-  }
-
-  /**
-   * add a movie to users favorite list
-   * @param favMovieId
-   */
-  addFavMovie(favMovieId: string): void {
-    this.fetchApiData.addFavMovie(favMovieId).subscribe(() => {
-      console.log('addfavmovies called');
-
-      this.snackBar.open('added to favorites', 'OK', { duration: 2000 });
-      console.log('addfavmovies called');
-    });
-  }
-
-  /**
-   * removes a movie from the users favorite list
-   * @param favMovieId
-   */
-  removeFavMovie(favMovieId: string): void {
-    this.fetchApiData.deleteFavMovie(favMovieId).subscribe(() => {
-      this.snackBar.open('removed movie from favorites', 'OK', {
-        duration: 2000,
+    getFavorite(): void {
+      this.fetchApiData.getFavoriteMovies().subscribe((resp: any) => {
+        this.favorites = resp;
+        return this.favorites;
       });
-    });
-    console.log('removed fav movie');
-  }
+    }
+  
+    /**
+     * checks if movieId is in favorites list and returns boolean
+     * @param movieId
+     * @returns true or false boolean
+     */
+    isFavorite(movieId: string): boolean {
+      if (this.favorites.includes(movieId)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  
+    /**
+     * updates both database and favorites array with movieId
+     * @param movieId
+     */
+    addFavorite(movieId: string): void {
+      const username = localStorage.getItem('Username');
+      const token = localStorage.getItem('token');
+  
+      if (username && token) {
+        this.fetchApiData.addFavoriteMovie(username, movieId).subscribe(
+          (response) => {
+            this.favorites.push(movieId); // updates favorites array
+            this.snackBar.open('Movie added to favorites', 'OK', {
+              duration: 2000,
+            });
+          },
+          (error) => {
+            this.snackBar.open('Failed to add movie to favorites', 'OK', {
+              duration: 2000,
+            });
+          }
+        );
+      }
+    }
+  
+    /**
+     * deletes movie from both database and favorites array
+     * @param movieId
+     */
+    deleteFavorite(movieId: string): void {
+      const username = localStorage.getItem('Username');
+      const token = localStorage.getItem('token');
+  
+      if (username && token) {
+        this.fetchApiData.deleteFavoriteMovie(username, movieId).subscribe(
+          (response) => {
+            // updates favorites array
+            this.favorites = this.favorites.filter((movie) => movie !== movieId);
+            this.snackBar.open('Movie deleted from favorites', 'OK', {
+              duration: 2000,
+            });
+          },
+          (error) => {
+            this.snackBar.open('Failed to delete movie from favorites', 'OK', {
+              duration: 2000,
+            });
+          }
+        );
+      }
+    }
 }
