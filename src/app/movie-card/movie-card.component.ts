@@ -82,4 +82,38 @@ export class MovieCardComponent implements OnInit {
     });
   }
 
+   /**
+   *
+   * @param favMovieId
+   * @returns a boolean, if the following movie is in the users favorite list or not
+   */
+   isFavorite(favMovieId: string): boolean {
+    return this.fetchApiData.isFavMovies(favMovieId);
+  }
+
+  /**
+   * add a movie to users favorite list
+   * @param favMovieId
+   */
+  addFavMovie(favMovieId: string): void {
+    this.fetchApiData.addFavMovie(favMovieId).subscribe(() => {
+      console.log('addfavmovies called');
+
+      this.snackBar.open('added to favorites', 'OK', { duration: 2000 });
+      console.log('addfavmovies called');
+    });
+  }
+
+  /**
+   * removes a movie from the users favorite list
+   * @param favMovieId
+   */
+  removeFavMovie(favMovieId: string): void {
+    this.fetchApiData.deleteFavMovie(favMovieId).subscribe(() => {
+      this.snackBar.open('removed movie from favorites', 'OK', {
+        duration: 2000,
+      });
+    });
+    console.log('removed fav movie');
+  }
 }

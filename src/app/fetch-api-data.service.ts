@@ -86,19 +86,22 @@ export class FetchApiDataService {
     );
   }
 
-     // Making the api call for get user endpoint
-     getUser(): Observable< any >{
-      const token = localStorage.getItem('token');
-            
-      return this.http.get(apiUrl + 'users/:Username', {headers: new HttpHeaders(
-        {
-          Authorization: 'Bearer' + token,
-        }
-      )}).pipe(
-        map(this.extractResponseData),
-        catchError(this.handleError)
-      )
-    }
+   /**
+   * get one of the users
+   * @param username
+   * @returns the user on the user-profile component
+   */
+   getUser(): Observable<any> {
+    const username = localStorage.getItem('Username');
+    const token = localStorage.getItem('token');
+    return this.http
+      .get(apiUrl + 'users/' + username, {
+        headers: new HttpHeaders({
+          Authorization: 'Bearer ' + token,
+        }),
+      })
+      .pipe(map(this.extractResponseData), catchError(this.handleError));
+  }
     
     public addFavMovie(favMovieId: string): Observable<any> {
       const token = localStorage.getItem('token');
@@ -108,11 +111,11 @@ export class FetchApiDataService {
       console.log('fetch api: add fav movies called');
       console.log(favMovieId);
       console.log(`Add Fav Token: ${token}`);
-      console.log(`Username: ${user.username}`);
+      console.log(`Username: ${user.Username}`);
   
       return this.http
         .post<Response>(
-          apiUrl + 'users/' + user.username + '/movies/' + favMovieId,
+          apiUrl + 'users/' + user.Username + '/movies/' + favMovieId,
           {},
           {
             headers: new HttpHeaders({
@@ -139,7 +142,7 @@ export class FetchApiDataService {
   
       return this.http
         .delete<Response>(
-          apiUrl + 'users/' + user.username + '/movies/' + favMovieId,
+          apiUrl + 'users/' + user.Username + '/movies/' + favMovieId,
           {
             headers: new HttpHeaders({
               Authorization: 'Bearer ' + token,

@@ -30,6 +30,9 @@ ngOnInit(): void {
 // toggles edit mode
 toggleEditMode(): void {
   this.editMode = !this.editMode;
+  if (this.editMode) {
+    this.getUser();
+  }
 }
 
   /**
