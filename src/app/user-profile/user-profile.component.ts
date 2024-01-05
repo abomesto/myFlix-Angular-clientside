@@ -31,7 +31,7 @@ ngOnInit(): void {
 toggleEditMode(): void {
   this.editMode = !this.editMode;
   if (this.editMode) {
-    this.getUser();
+    //this.getUser();
   }
 }
 
@@ -46,15 +46,17 @@ toggleEditMode(): void {
       this.userData.Username = this.user.Username;
       this.userData.Email = this.user.Email;
       this.userData.Birthday = this.user.Birthday;
-    });
-    this.FetchApiDataService.getAllMovies().subscribe((resp: any) => {
-      const movies = resp;
-      movies.forEach((movie: any) => {
-        if (this.user.FavoriteMovies.includes(movie._id)) {
-          this.favorites.push(movie);
-        }
+
+      this.FetchApiDataService.getAllMovies().subscribe((resp: any) => {
+        const movies = resp;
+        movies.forEach((movie: any) => {
+          if (this.user.FavoriteMovies.includes(movie._id)) {
+            this.favorites.push(movie);
+          }
+        });
       });
     });
+    
   }
 
   /**
