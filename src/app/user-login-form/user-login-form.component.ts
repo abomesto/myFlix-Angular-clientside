@@ -31,7 +31,12 @@ export class UserLoginFormComponent implements OnInit {
         
     }
 
-       // This is the function responsible for sending the form inputs to the backend
+  /**
+   * updates user's information and refreshes user info
+   * @param userData
+   * @returns the user's information
+   * @returns the user's token
+   */
   loginUser(): void {
     this.fetchApiData.userLogin(this.loginData).subscribe((result) => {
       // Successfully login done
